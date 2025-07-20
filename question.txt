@@ -1,0 +1,3 @@
+what is the average salary?
+max age?
+min income?
