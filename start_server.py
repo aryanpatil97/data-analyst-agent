@@ -11,15 +11,12 @@ def main():
     # Load environment variables
     load_dotenv()
     
-    # Check for required API key
+    # Check for required API key (warn but don't exit in production)
     api_key = os.getenv('GEMINI_API_KEY')
     if not api_key:
-        print("❌ Error: GEMINI_API_KEY not found!")
-        print("Please:")
-        print("1. Copy .env.example to .env")
-        print("2. Add your Gemini API key to the .env file")
-        print("3. Get an API key from: https://makersuite.google.com/app/apikey")
-        sys.exit(1)
+        print("⚠️  Warning: GEMINI_API_KEY not found!")
+        print("The API will start but may not function properly without the API key.")
+        print("Make sure to set GEMINI_API_KEY in your environment variables.")
     
     print("🚀 Starting Data Analyst Agent API...")
     print("📍 Server will be available at: http://localhost:8000")
