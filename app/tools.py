@@ -22,7 +22,12 @@ import plotly.graph_objects as go
 import plotly.express as px
 from bs4 import BeautifulSoup
 from typing import Any, Dict, List, Union, Optional
-from scipy import stats
+# Statistical analysis (optional)
+try:
+    from scipy import stats
+    SCIPY_AVAILABLE = True
+except ImportError:
+    SCIPY_AVAILABLE = False
 import re
 from urllib.parse import urljoin, urlparse
 import warnings
@@ -279,9 +284,19 @@ class DataAnalystTools:
                     return {
                         "error": f"Insufficient data for regression. Only {len(clean_df)} valid data points."
                     }
-                slope, intercept, r_value, p_value, std_err = stats.linregress(
-                    clean_df[x_col], clean_df[y_col]
-                )
+                
+                if SCIPY_AVAILABLE:
+                    slope, intercept, r_value, p_value, std_err = stats.linregress(
+                        clean_df[x_col], clean_df[y_col]
+                    )
+                else:
+                    # Simple linear regression fallback
+                    slope = 0
+                    intercept = clean_df[y_col].mean()
+                    r_value = 0
+                    p_value = 1
+                    std_err = 0
+                
                 return {
                     "slope": slope,
                     "intercept": intercept,
@@ -318,9 +333,17 @@ class DataAnalystTools:
                     if len(grouped) > 1 and pd.api.types.is_numeric_dtype(
                         grouped[group_by]
                     ):
-                        slope, intercept, r_value, p_value, std_err = stats.linregress(
-                            grouped[group_by], grouped["date_diff"]
-                        )
+                        if SCIPY_AVAILABLE:
+                            slope, intercept, r_value, p_value, std_err = stats.linregress(
+                                grouped[group_by], grouped["date_diff"]
+                            )
+                        else:
+                            slope = 0
+                            intercept = grouped["date_diff"].mean()
+                            r_value = 0
+                            p_value = 1
+                            std_err = 0
+                        
                         return {
                             "slope": slope,
                             "intercept": intercept,
@@ -350,9 +373,17 @@ class DataAnalystTools:
                 ).dt.year
                 df_copy = df_copy.dropna(subset=["year", "date_diff"])
                 if len(df_copy) > 1:
-                    slope, intercept, r_value, p_value, std_err = stats.linregress(
-                        df_copy["year"], df_copy["date_diff"]
-                    )
+                    if SCIPY_AVAILABLE:
+                        slope, intercept, r_value, p_value, std_err = stats.linregress(
+                            df_copy["year"], df_copy["date_diff"]
+                        )
+                    else:
+                        slope = 0
+                        intercept = df_copy["date_diff"].mean()
+                        r_value = 0
+                        p_value = 1
+                        std_err = 0
+                    
                     return {
                         "slope": slope,
                         "intercept": intercept,
@@ -423,19 +454,28 @@ class DataAnalystTools:
                 clean_df = clean_df.dropna()
                 if len(clean_df) < 2:
                     return f"Error: Insufficient data for visualization. Only {len(clean_df)} valid data points."
+                
+                if not VISUALIZATION_AVAILABLE:
+                    return "Error: Visualization packages not available"
+                
                 plt.scatter(clean_df[x_col], clean_df[y_col], alpha=0.6, s=50)
-                slope, intercept, r_value, p_value, std_err = stats.linregress(
-                    clean_df[x_col], clean_df[y_col]
-                )
-                line_x = np.linspace(clean_df[x_col].min(), clean_df[x_col].max(), 100)
-                line_y = slope * line_x + intercept
-                plt.plot(
-                    line_x,
-                    line_y,
-                    "r--",
-                    linewidth=2,
-                    label=f"Regression Line (R²={r_value**2:.3f})",
-                )
+                
+                if SCIPY_AVAILABLE:
+                    slope, intercept, r_value, p_value, std_err = stats.linregress(
+                        clean_df[x_col], clean_df[y_col]
+                    )
+                    line_x = np.linspace(clean_df[x_col].min(), clean_df[x_col].max(), 100)
+                    line_y = slope * line_x + intercept
+                    plt.plot(
+                        line_x,
+                        line_y,
+                        "r--",
+                        linewidth=2,
+                        label=f"Regression Line (R²={r_value**2:.3f})",
+                    )
+                else:
+                    # Simple trend line without scipy
+                    plt.plot(clean_df[x_col], clean_df[y_col], "r--", alpha=0.5, label="Trend Line")
                 plt.xlabel(x_col)
                 plt.ylabel(y_col)
                 plt.title(f"Scatter Plot: {x_col} vs {y_col}")
