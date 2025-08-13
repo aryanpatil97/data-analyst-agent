@@ -1,0 +1,10 @@
+﻿Analyze sample-weather.csv.
+
+Return a JSON object with keys:
+- verage_temp_c: number
+- max_precip_date: string
+- min_temp_c: number
+- 	emp_precip_correlation: number
+- verage_precip_mm: number
+- 	emp_line_chart: base64 PNG string under 100kB
+- precip_histogram: base64 PNG string under 100kB

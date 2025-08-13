@@ -1,0 +1,10 @@
+﻿Analyze sample-sales.csv.
+
+Return a JSON object with keys:
+- 	otal_sales: number
+- 	op_region: string
+- day_sales_correlation: number
+- ar_chart: base64 PNG string under 100kB
+- median_sales: number
+- 	otal_sales_tax: number
+- cumulative_sales_chart: base64 PNG string under 100kB
