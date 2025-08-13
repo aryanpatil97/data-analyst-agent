@@ -6,8 +6,14 @@ Contains utilities for web scraping, data analysis, visualization, and more.
 import requests
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+
+# Visualization (optional)
+try:
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    VISUALIZATION_AVAILABLE = True
+except ImportError:
+    VISUALIZATION_AVAILABLE = False
 import base64
 import io
 import json

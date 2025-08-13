@@ -14,7 +14,13 @@ import io
 import base64
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+
+# Visualization (optional)
+try:
+    import matplotlib.pyplot as plt
+    VISUALIZATION_AVAILABLE = True
+except ImportError:
+    VISUALIZATION_AVAILABLE = False
 
 
 def _to_base64_png(fig, max_bytes: int = 100_000, initial_dpi: int = 110) -> str:
