@@ -1,0 +1,2 @@
+Question: What is the capital of France and what is its population?
+Data: France is a country in Europe. Paris is its capital city with a population of about 2.2 million people in the city proper.
